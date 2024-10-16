@@ -1,0 +1,30 @@
+{
+  "name": "legitscriptitis",
+  "version": "0.1.0",
+  "description": "legitscriptitis - GLSL -> JS -> TaichiLang -> WGSL",
+  "type": "module",
+  "browser": "./src/main.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-legacy": "^3.0.2",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-strip": "^3.0.4",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "codemirror": "^6.0.1",
+    "glsl-transpiler": "github:Sam-Izdat/glsl-transpiler",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "thememirror": "^2.0.1"
+  },
+  "devDependencies": {
+    "rollup-plugin-polyfill-node": "^0.13.0"
+  }
+}

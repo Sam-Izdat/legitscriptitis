@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>legitscriptitis</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: 'unsafe-eval' 'unsafe-inline' blob:; worker-src blob:;">
+  </head>
+
+  <body>
+
+    <div id="no_webgpu" class="spinner_bg">
+      <img src="/images/pikachu_under_construction.gif">
+      <div id="loading_text">no webgpu maybe? :(</div>
+    </div>
+    <div id="throbber_wrap" class="spinner_bg">
+      <div id="loading_text">
+        <span class="wave">
+          <span>L</span>
+          <span>O</span>
+          <span>A</span>
+          <span>D</span>
+          <span>I</span>
+          <span>N</span>
+          <span>G</span>
+          <span> </span>
+        </span>
+        <span class="wave">
+          <span>P</span>
+          <span>R</span>
+          <span>O</span>
+          <span>B</span>
+          <span>A</span>
+          <span>B</span>
+          <span>L</span>
+          <span>Y</span>
+          <span>!</span>
+        </span>
+      </div>
+      <div id="throbber" class="spinner"></div>
+      <div id="loading_text">...or maybe webgpu isn't supported - who knows lol...</div>
+    </div>
+
+    <div class="top">
+        <div class="container">
+            <div class="left-half">
+                <canvas id="result_canvas"></canvas>
+            </div>
+            <div class="right-half">
+                <div id="editor-container">
+                    <textarea id="editor">
+void ColorPass(in float r, in float g, in float b, out vec4 out_color)
+{{
+  vec2 complex_sqr(vec2 z) { return vec2(z[0] * z[0] - z[1] * z[1], z[1] * z[0] * 2); }  
+  int n = int(_lti_resolution.x * 0.5);
+
+  void main() {
+    float i = gl_FragCoord.x;
+    float j = gl_FragCoord.y;
+    vec2 c = vec2(-0.8, cos((_lti_time * 0.0012)));
+    vec2 z = vec2(i / n - 1, j / n - 0.5) * 2;
+    int iterations = 0;
+    // taichi also has `norm(z)`
+    while (sqrt(dot(z, z)) < 20 && iterations < 50) {
+      z = complex_sqr(z) + c;
+      iterations = iterations + 1;
+    }
+    
+    vec4 fractal = vec4(iterations * 0.02);
+    fractal.a = 1.;
+    vec4 col = vec4(r, g, b + 0.5, 1.0);
+    out_color = mix(fractal, col, 0.15);
+  }
+}}
+
+void RenderGraphMain()
+{{
+  void main() {
+    Image img = GetImage(ivec2(128, 128), rgba8);
+    Image img2 = GetImage(ivec2(256, 256), rgba8);
+    ColorPass(
+      0.25,
+      0.5,
+      0.75,
+      GetSwapchainImage());
+  }    
+}} 
+                    </textarea>
+                </div>
+                <div>
+                    <a href="javascript:void(0);" id="legitimize" class="lsButton">Legitimize!</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom">
+          <section>
+            <pre id="compilation-result">
+            </pre>
+          </section>
+        </div>
+    </div>
+
+
+    
+
+
+
+          
+
+
+
+
+
+
+    <style>
+      body {
+        background: #333;
+      }
+      .spinner_bg {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 90vh;
+          background: transparent;
+      }
+
+     .spinner {
+       --R: 36px;
+       --g1: #ff71c8 96%, #0000;
+       --g2: #dbdcef 96%, #0000;
+       width: calc(2*var(--R));
+       height: calc(2*var(--R));
+       border-radius: 50%;
+       display: grid;
+       -webkit-mask: linear-gradient(#000 0 0);
+       animation: spinner-maxc6n 2s infinite linear;
+    }
+
+    .spinner::before,
+    .spinner::after {
+       content: "";
+       grid-area: 1/1;
+       width: 50%;
+       background: radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+            radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+            radial-gradient(farthest-side,var(--g2)) calc(var(--R) + 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+            radial-gradient(farthest-side,var(--g1)) 0 calc(-1*var(--R)),
+            radial-gradient(farthest-side,var(--g2)) calc(var(--R) - 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+            radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+            radial-gradient(farthest-side,var(--g2)) calc(-1*var(--R))  0,
+            radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) + 0.5*var(--R)   - var(--R));
+       background-size: calc(2*var(--R)) calc(2*var(--R));
+       background-repeat: no-repeat;
+    }
+
+    .spinner::after {
+       transform: rotate(180deg);
+       transform-origin: right;
+    }
+
+    @keyframes spinner-maxc6n {
+       100% {
+          transform: rotate(-1turn);
+       }
+    }
+
+    #no_webgpu {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 90vh;
+      background: transparent;
+    }
+
+    #loading_text {
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      margin: 20px; 
+      font-size: 18px; 
+      color: #cc50b7; 
+    }
+
+
+    .wave {
+        display: inline-block;
+    }
+
+    .wave span {
+        display: inline-block;
+        animation: wave 1s infinite;
+    }
+
+    .wave span:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .wave span:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .wave span:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .wave span:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+
+    .wave span:nth-child(5) {
+        animation-delay: 0.4s;
+    }
+
+    .wave span:nth-child(6) {
+        animation-delay: 0.5s;
+    }
+
+    .wave span:nth-child(7) {
+        animation-delay: 0.6s;
+    }
+
+    .wave span:nth-child(8) {
+        animation-delay: 0.7s;
+    }
+
+    .wave span:nth-child(9) {
+        animation-delay: 0.8s;
+    }
+
+    @keyframes wave {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    #result_canvas {
+        display: block;
+    }
+    </style>
+
+
+
+  <style>
+    textarea#editor {
+        display: none;
+    width: 100%;
+    resize: none; /* Prevent manual resizing */
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensure padding is included in the size */
+      background-color: #222;
+      color: #fff;
+      height: 500px;
+      padding: 1em;
+    }
+
+    #compilation-result {
+      background-color: #222;
+      color: #fff;
+      height: 500px;
+      padding: 1em;
+    }
+  </style>
+
+
+  <style>
+    .lsButton {
+        box-shadow:inset 0px 1px 0px 0px #bee2f9;
+        background:linear-gradient(to bottom, #63b8ee 5%, #468ccf 100%);
+        background-color:#63b8ee;
+        border-radius:6px;
+        border:1px solid #3866a3;
+        display:inline-block;
+        cursor:pointer;
+        color:#14396a;
+        font-family:Arial;
+        font-size:15px;
+        font-weight:bold;
+        padding:6px 24px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #7cacde;
+    }
+    .lsButton:hover {
+        background:linear-gradient(to bottom, #468ccf 5%, #63b8ee 100%);
+        background-color:#468ccf;
+    }
+    .lsButton:active {
+        position:relative;
+        top:1px;
+    }
+           
+  </style>
+
+
+  <style>
+
+.container {
+    display: none;
+/*    height: 100vh; /* 100% of the viewport height */*/
+}
+
+.top {
+    display: block;
+    width: 100%;
+}
+.bottom {
+    display: block;
+    width: 100%;
+    clear: both;
+}
+
+.left-half, .right-half {
+    flex: 1; /* Take up 50% each */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.right-half {
+    display: flex;
+    flex-direction: column;
+    padding: 10px; 
+}
+
+#editor-container {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.cm-editor {
+    font-size: 14px;
+    max-height: 1000px; 
+}
+  </style>
+
+  
+
+    <!-- <script src="ls.js" type="module" ></script> -->
+    <script src="tinyti.umd.js"></script>
+    <script src="legitscriptitis.js"></script>    
+    <script src="webpage.js"></script>
+  </body>
+</html>
