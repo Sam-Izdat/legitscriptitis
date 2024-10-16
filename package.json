@@ -1,7 +1,7 @@
 {
   "name": "legitscriptitis",
   "version": "0.1.0",
-  "description": "LegitScript - now with the power of Taichi... through the power of JavaScript",
+  "description": "legitscriptitis - GLSL -> JS -> TaichiLang -> WGSL",
   "type": "module",
   "browser": "./src/main.js",
   "scripts": {

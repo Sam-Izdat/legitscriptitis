@@ -4,18 +4,11 @@ new Log(Log.Level.DEBUG);
 import Module from "../vendor/LegitScriptWasm.js";
 import {Renderer} from './renderer';
 
-
-// import loader from '@monaco-editor/loader';
 import {basicSetup} from "codemirror";
 import {EditorView, keymap} from "@codemirror/view";
 import {indentWithTab} from "@codemirror/commands";
 import {cpp} from "@codemirror/lang-cpp";
 import {coolGlow} from 'thememirror';
-
-// const state = EditorState.create({
-//   doc: 'my source code',
-//   extensions: [dracula],
-// });
 
 export * from './transpile';
 export var shared = {};
@@ -51,16 +44,6 @@ let ls_compile = (ls_compiler, content) => {
     return false;
   }
 };
-
-
-
-
-// loader.init().then(monaco => {
-//   monaco.editor.create(el_editor_container, {
-//     value: el_editor_source.value,
-//     language: 'cpp',
-//   });
-// });
 
 let rebuild = async (ls_code) => {
   const ls_descs = ls_compile(ls_compiler, ls_code);

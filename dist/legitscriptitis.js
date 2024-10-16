@@ -50706,16 +50706,6 @@
     }
   };
 
-
-
-
-  // loader.init().then(monaco => {
-  //   monaco.editor.create(el_editor_container, {
-  //     value: el_editor_source.value,
-  //     language: 'cpp',
-  //   });
-  // });
-
   let rebuild = async (ls_code) => {
     const ls_descs = ls_compile(ls_compiler, ls_code);
     ls_renderer = new Renderer(el_html_canvas, ls_descs);
