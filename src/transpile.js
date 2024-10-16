@@ -23,7 +23,7 @@ export let transpile_glsl = (glsl) => {
 		includes: true,
 
 		// Enable debugging facilities: `print(anything)` will log to console a string of transpiled code with it’s type separated by colon, `show(anything)` will print the rendered descriptor of passed fragment of code. Note also that you can safely use `console.log(value)` to debug shader runtime.
-		debug: true
+		debug: false
 	});
 
 	let result = compile(glsl);
