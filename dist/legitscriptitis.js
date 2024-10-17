@@ -14543,24 +14543,24 @@
   function faceforward(N, I, Nref) {
       if (Nref == null) Nref = N;
 
-      var dot = 0;
+      var d = 0;
       for (var i = 0; i < N.length; i++) {
-          dot += Nref[i] * I[i];
+          d += Nref[i] * I[i];
       }
 
-      return dot > 0 ? N.map(function (x) { return -x; }) : N;
+      return d > 0 ? N.map(function (x) { return -x; }) : N;
   }
   faceforward.type = genType;
 
   function reflect(I, N) {
-      var dot = 0;
+      var d = 0;
       for (var i = 0; i < N.length; i++) {
-          dot += N[i] * I[i];
+          d += N[i] * I[i];
       }
 
       var out = Array(N.length);
       for (var i = 0; i < N.length; i++) {
-          out[i] = I[i] - 2 * dot * N[i];
+          out[i] = I[i] - 2 * d * N[i];
       }
 
       return out;
@@ -14568,18 +14568,18 @@
   reflect.type = genType;
 
   function refract(I, N, eta) {
-      var dot = 0;
+      var d = 0;
       for (var i = 0; i < N.length; i++) {
-          dot += N[i] * I[i];
+          d += N[i] * I[i];
       }
 
-      var k = 1 - eta * eta * (1 - dot * dot);
+      var k = 1 - eta * eta * (1 - d * d);
 
       var out = Array(N.length).fill(0);
 
       if (k > 0) {
           for (var i = 0; i < N.length; i++) {
-              out[i] = eta * I[i] - (eta * dot + Math.sqrt(k)) * N[i];
+              out[i] = eta * I[i] - (eta * d + Math.sqrt(k)) * N[i];
           }
       }
 
@@ -50753,7 +50753,7 @@
   let main = async () => {
     // Set up canvas
     el_html_canvas.width = 768;
-    el_html_canvas.height = 560;
+    el_html_canvas.height = 768;
 
     // Init tinyti.js/taichi.js
     await ti.init();

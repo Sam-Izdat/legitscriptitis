@@ -92,7 +92,7 @@ let frame = async (width, height) => {
 export let main = async () => {
   // Set up canvas
   el_html_canvas.width = 768;
-  el_html_canvas.height = 560;
+  el_html_canvas.height = 768;
 
   // Init tinyti.js/taichi.js
   await ti.init();

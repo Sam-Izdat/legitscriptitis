@@ -50,40 +50,64 @@
                     <textarea id="editor">
 void ColorPass(in float r, in float g, in float b, out vec4 out_color)
 {{
+  // Things that are broken:
+  // - for loops
+  // - iterators (i++ ; i+=1)
+  // - almost everything else!
   vec2 complex_sqr(vec2 z) { return vec2(z[0] * z[0] - z[1] * z[1], z[1] * z[0] * 2); }  
-  int n = int(_lti_resolution.x * 0.5);
-
+  ivec2 s = _lti_resolution;
+  int n = int(s.x * 0.5);
   void main() {
     float i = gl_FragCoord.x;
     float j = gl_FragCoord.y;
-    vec2 c = vec2(-0.8, cos((_lti_time * 0.0012)));
+    float w = gl_FragCoord.xy/s;
+    float t = _lti_time * 0.0012;
+    float l = t;
+    float q = t;
+    vec2 c = vec2(-0.8, cos(t));
     vec2 z = vec2(i / n - 1, j / n - 0.5) * 2;
+    vec3 d = vec3(0.);
     int iterations = 0;
-    // taichi also has `norm(z)`
+    // from: https://stackblitz.com/edit/taichi-js-fractal?file=index.js
     while (sqrt(dot(z, z)) < 20 && iterations < 50) {
       z = complex_sqr(z) + c;
       iterations = iterations + 1;
-    }
-    
-    vec4 fractal = vec4(iterations * 0.02);
+    }    
+    vec4 fractal = vec4(float(iterations) - log(0.5 * log(dot(z, z)) / log(20.0)) / log(2.0)) * 0.02;
     fractal.a = 1.;
-    vec4 col = vec4(r, g, b + 0.5, 1.0);
-    out_color = mix(fractal, col, 0.15);
+    // from: https://www.shadertoy.com/view/XsXXDn
+    int k = 0;
+    while(k<3) {
+        vec2 p = w;
+        vec2 uv = p;
+        p = p-.5;
+        p.x = p.x* (s.x/s.y);
+        q = q+.07;
+        l = vlength(p);
+        uv = uv+ (p/l*(sin(q)+1.)*abs(sin(l*9.-q-q)));
+        if (k == 0) { d.x=.01/vlength(mod(uv,1.)-.5); }
+        if (k == 1) { d.y=.01/vlength(mod(uv,1.)-.5); }
+        if (k == 2) { d.z=.01/vlength(mod(uv,1.)-.5); }      
+      k = k+1;
+    }
+    vec4 thing = vec4(d.x/l,d.y/l,d.z/l,t);    
+    vec4 ucol = vec4(r, g, b + 0.5, 1.0);
+    out_color = mix(fractal, thing, 0.15) * ucol;
   }
 }}
 
 void RenderGraphMain()
 {{
+  Image img = GetImage(ivec2(128, 128), rgba8);
+  Image img2 = GetImage(ivec2(256, 256), rgba8);
   void main() {
-    Image img = GetImage(ivec2(128, 128), rgba8);
-    Image img2 = GetImage(ivec2(256, 256), rgba8);
     ColorPass(
       0.25,
       0.5,
       0.75,
       GetSwapchainImage());
   }    
-}} 
+}}
                     </textarea>
                 </div>
                 <div>
@@ -321,6 +345,13 @@ void RenderGraphMain()
     align-items: center;
     font-size: 24px;
 }
+.right-half {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    max-width: 100%; /* Prevent overflow */
+    overflow: hidden; /* Hide overflow content */
+}
 
 .right-half {
     display: flex;
@@ -330,12 +361,13 @@ void RenderGraphMain()
 
 #editor-container {
     width: 100%;
+    max-width: 100%; /* Limit to container width */
     margin-bottom: 10px;
 }
 
 .cm-editor {
     font-size: 14px;
-    max-height: 1000px; 
+    max-height: 800px;
 }
   </style>
 
